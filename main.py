@@ -8,9 +8,9 @@ from barcode.writer import ImageWriter
 
 
 root = Tk()
-root.resizable(False, False)
+# root.resizable(False, False)
 root.title("EAN - 13 | Barcode generator")
-lb3, lb4, lb5 = None, None, None
+view, lb3, lb4, lb5 = None, None, None, None
 
 
 def clr():
@@ -32,7 +32,7 @@ def checkdigit(code):
 
 
 def generate():
-    global root, lb3, lb4, lb5
+    global root, view, lb3, lb4, lb5
     code_input = code.get()
     saveto_input = saveto.get()
     if len(code_input) == 12:
@@ -42,14 +42,18 @@ def generate():
             img = Image.open(f"{saveto_input.split('.eps')[0]}.jpeg")
             fig = img.convert('RGB')
             fig.save(saveto_input, "EPS")
+            os.remove(f"{saveto_input.split('.eps')[0]}.jpeg")
+            os.remove(f"{saveto_input.split('.eps')[0]}.png")
             clr()
-            print(f"{saveto_input.split('.eps')[0]}.png")
-            lb3 = Label(root, text="EAN-13 Barcode:", font=('Helvetica', 12, 'bold'))
-            lb4 = Label(root, image=ImageTk.PhotoImage(Image.open(f"{saveto_input.split('.eps')[0]}.png")))
-            lb5 = Label(root, text=f"Check Digit: {checkdigit(code_input)}", fg="orange" ,font=('Helvetica', 12, 'bold'))
-            lb3.pack(pady=5)
-            lb4.pack(pady=5)
-            lb5.pack(pady=5)
+            img = PhotoImage(file=f"img.png")
+            lb3 = Label(root, image=img)
+            lb3.pack()
+            # lb3 = Label(root, text="EAN-13 Barcode:", font=('Helvetica', 12, 'bold'))
+            # lb4 = Label(root, image=ImageTk.PhotoImage(Image.open(f"{saveto_input.split('.eps')[0]}.png")))
+            # lb5 = Label(root, text=f"Check Digit: {checkdigit(code_input)}", fg="orange" ,font=('Helvetica', 12, 'bold'))
+            # lb3.pack(pady=5)
+            # lb4.pack(pady=5)
+            # lb5.pack(pady=5)
         else:
             msg_box.showinfo("Wrong input!", "Please enter correct file name.")
     else:
@@ -62,8 +66,9 @@ saveto = Entry(root)
 lb2 = Label(root, text="Enter code (first 12 decimal digits):", font=('Helvetica', 12, 'bold'))
 code = Entry(root)
 submit = Button(root, text="Submit", command=lambda: generate())
-view = Canvas(root, bg="white", height="250", width="275")
-
+img = PhotoImage(file="img.png")
+# view = Canvas(root, bg="white", height="250", width="275")
+lb3 = Label(root, image=img)
 
 # packing
 lb1.pack()
@@ -71,6 +76,7 @@ saveto.pack()
 lb2.pack()
 code.pack()
 submit.pack(pady=5)
-view.pack(pady=5, fill="both", expand=True)
+# view.pack(pady=5)
+lb3.pack()
 
 root.mainloop()
